@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "980102022811",
+    "project_id": "practice-auth-e8c1e",
+    "storage_bucket": "practice-auth-e8c1e.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:980102022811:android:60397edec73dccc43d283e",
+        "android_client_info": {
+          "package_name": "com.example.capstone_project"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBfbAssTAfzbvlVPukIMz-uEKZNxFIGf2M"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
