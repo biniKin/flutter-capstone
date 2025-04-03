@@ -1,3 +1,4 @@
+import 'package:capstone_project/features/core/presentation/screens/home.dart';
 import 'package:flutter/material.dart';
 
 void main() async {
@@ -9,6 +10,9 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp();
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: Home(),
+    );
   }
 }
