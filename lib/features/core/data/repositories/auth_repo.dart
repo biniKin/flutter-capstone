@@ -1,6 +1,5 @@
-import 'package:capstone_project/features/core/data/service/api_service.dart';
 import 'package:capstone_project/features/core/data/service/auth_service.dart';
-import 'package:capstone_project/features/core/data/service/storage_service.dart';
+
 import 'package:firebase_auth/firebase_auth.dart';
 
 class AuthRepo {
