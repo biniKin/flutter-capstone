@@ -1,3 +1,6 @@
+import 'package:capstone_project/features/core/domain/entities/user.dart';
+import 'package:capstone_project/features/core/domain/repositories/auth_repository.dart';
+
 class AuthUseCases {
   final AuthRepository repository;
 
