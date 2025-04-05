@@ -40,6 +40,6 @@ class AuthService {
   }
 
   void signOut() async {
-    await FirebaseAuth.instance.signOut();
+    await _auth.signOut();
   }
 }
