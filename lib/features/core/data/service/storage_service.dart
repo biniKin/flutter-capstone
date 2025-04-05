@@ -48,7 +48,7 @@ class StorageService {
   }
 
   //
-   Future<CartModel?> getCartData(String id) async {
+  Future<CartModel?> getCartData(String id) async {
     try {
       DocumentSnapshot doc = await firestore.collection('orders').doc(id).get();
       if (doc.exists) {
@@ -59,6 +59,7 @@ class StorageService {
     }
     return null;
   }
+
   //
   Future<OrderModel?> getOrderData(String id) async {
     try {

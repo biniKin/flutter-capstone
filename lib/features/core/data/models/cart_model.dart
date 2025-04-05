@@ -27,22 +27,22 @@ class CartModel {
   //
   factory CartModel.fromFirebase(Map<String, dynamic> data) {
     return CartModel(
-      id: data['id'],
-      title: data['title'],
-      category: data['catergory'],
-      price: data['price'],
-      imageUrl: data['image'],
+      id: data['id'] ?? '',
+      title: data['title'] ?? '',
+      category: data['catergory'] ?? 0,
+      price: data['price'] ?? '',
+      imageUrl: data['image'] ?? '',
     );
   }
 
   //
-  Map<String, dynamic> toFirestore() {
+  Map<String, dynamic> toJson() {
     return {
-      'id':id,
-      'title':title,
-      'category':category,
-      'price':price,
-      'image':imageUrl,
+      'id': id,
+      'title': title,
+      'category': category,
+      'price': price,
+      'image': imageUrl,
     };
   }
 }

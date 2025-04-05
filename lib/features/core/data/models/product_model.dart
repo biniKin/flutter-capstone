@@ -22,14 +22,14 @@ class ProductModel {
   //converting Json to Object
   factory ProductModel.fromJson(Map<String, dynamic> json) {
     return ProductModel(
-      id: json['id'],
-      title: json['title'],
-      price: json['price'],
-      description: json['description'],
-      category: json['category'],
-      imageUrl: json['image'],
-      rate: json['rate'],
-      count: json['count'],
+      id: json['id'] ?? 0,
+      title: json['title'] ?? '',
+      price: json['price'] ?? 0,
+      description: json['description'] ?? '',
+      category: json['category'] ?? '',
+      imageUrl: json['image'] ?? '',
+      rate: json['rate'] ?? 0,
+      count: json['count'] ?? 0,
     );
   }
   //converting obj to json format
