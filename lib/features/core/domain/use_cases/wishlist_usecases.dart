@@ -1,3 +1,7 @@
+import 'package:capstone_project/features/core/domain/entities/product.dart';
+import 'package:capstone_project/features/core/domain/entities/wishlist.dart';
+import 'package:capstone_project/features/core/domain/repositories/wishlist_repository.dart';
+
 class WishlistUseCases {
   final WishlistRepository repository;
 

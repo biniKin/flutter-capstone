@@ -1,3 +1,6 @@
+import 'package:capstone_project/features/core/domain/entities/product.dart';
+import 'package:capstone_project/features/core/domain/repositories/product_repository.dart';
+
 class ProductUseCases {
   final ProductRepository repository;
 
