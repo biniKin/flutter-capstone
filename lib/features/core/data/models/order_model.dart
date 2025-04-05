@@ -1,8 +1,8 @@
 class OrderModel {
-  int id;
+  String id;
   String title;
   double price;
-  String image;
+  String imageUrl;
   String category;
 
   OrderModel({
@@ -10,6 +10,39 @@ class OrderModel {
     required this.title,
     required this.category,
     required this.price,
-    required this.image,
+    required this.imageUrl,
   });
+
+  //
+  factory OrderModel.fromJson(Map<String, dynamic> json) {
+    return OrderModel(
+      id: json['id'],
+      title: json['title'],
+      category: json['category'],
+      price: json['price'],
+      imageUrl: json['image'],
+    );
+  }
+
+  //
+  factory OrderModel.fromFirebase(Map<String, dynamic> data) {
+    return OrderModel(
+      id: data['id'],
+      title: data['title'],
+      category: data['catergory'],
+      price: data['price'],
+      imageUrl: data['image'],
+    );
+  }
+
+  //
+  Map<String, dynamic> toFirestore() {
+    return {
+      'id':id,
+      'title':title,
+      'category':category,
+      'price':price,
+      'image':imageUrl,
+    };
+  }
 }
