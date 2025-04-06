@@ -108,16 +108,32 @@ class StorageService {
   }
 
   //
-  Future<OrderModel?> getOrderData(String id) async {
+  Future<OrderModel?> getOrderData(String orderId) async {
     try {
-      DocumentSnapshot doc = await firestore.collection('orders').doc(id).get();
+      DocumentSnapshot doc = await firestore.collection('orders').doc(orderId).get();
       if (doc.exists) {
         return OrderModel.fromFirebase(doc.data() as Map<String, dynamic>);
       }
     } catch (e) {
-      throw Exception("error on getting orders: $e");
+      throw Exception('Error fetching order by ID: $e');
     }
     return null;
+  }
+
+  // Fetch all orders for a specific user
+  Future<List<OrderModel>> getUserOrders(String userId) async {
+    try {
+      final ordersSnapshot = await firestore
+          .collection('orders')
+          .where('userId', isEqualTo: userId)  // Filter by userId
+          .get();
+
+      return ordersSnapshot.docs.map((doc) {
+        return OrderModel.fromFirebase(doc.data() as Map<String, dynamic>);
+      }).toList();
+    } catch (e) {
+      throw Exception('Error fetching orders for user: $e');
+    }
   }
 
   Future<UserModel?> getUserData(String uid) async {
@@ -130,5 +146,37 @@ class StorageService {
       throw Exception("error fetching user data: $e");
     }
     return null;
+  }
+  ///////////
+  Future<void> addProductToWishlist(String userId, ProductModel product) async {
+    try {
+      await firestore.collection('wishlists').doc(userId).collection('items').doc(product.id).set(product.toJson());
+    } catch (e) {
+      throw Exception('Error adding product to wishlist: $e');
+    }
+  }
+
+  // Remove ProductModel from wishlist collection
+  Future<void> removeProductFromWishlist(String userId, String productId) async {
+    try {
+      await firestore.collection('wishlists').doc(userId).collection('items').doc(productId).delete();
+    } catch (e) {
+      throw Exception('Error removing product from wishlist: $e');
+    }
+  }
+
+  // Fetch Wishlist data for a user
+  Future<List<ProductModel>> getWishlistData(String userId) async {
+    try {
+      final wishlistSnapshot = await firestore
+          .collection('wishlists')
+          .doc(userId)
+          .collection('items')
+          .get();
+
+      return wishlistSnapshot.docs.map((doc) => ProductModel.fromJson(doc.data() as Map<String, dynamic>)).toList();
+    } catch (e) {
+      throw Exception('Error fetching wishlist: $e');
+    }
   }
 }

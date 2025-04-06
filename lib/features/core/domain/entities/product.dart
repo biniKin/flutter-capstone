@@ -5,6 +5,8 @@ class Product {
   final double price;
   final String imageUrl;
   final String category;
+  final double rate;
+  final double count;
 
   Product({
     required this.id,
@@ -13,5 +15,7 @@ class Product {
     required this.price,
     required this.imageUrl,
     required this.category,
+    required this.count,
+    required this.rate,
   });
 }

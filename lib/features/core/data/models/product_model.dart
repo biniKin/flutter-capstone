@@ -28,6 +28,8 @@ class ProductModel {
     price: price,
     imageUrl: imageUrl,
     category: category,
+    rate: rate,
+    count: count,
   );
 
   //converting Json to Object
@@ -43,6 +45,20 @@ class ProductModel {
       count: json['count'] ?? 0,
     );
   }
+  //
+  factory ProductModel.fromEntity(Product product) {
+  return ProductModel(
+    id: product.id,
+    title: product.title,
+    price: product.price,
+    description: product.description,
+    category: product.category,
+    imageUrl: product.imageUrl,
+    rate: product.rate,
+    count: product.count,
+  );
+}
+
   //converting obj to json format
   Map<String, dynamic> toJson() {
     return {

@@ -1,9 +1,19 @@
-class OrderModel {
-  String id;
-  String title;
-  double price;
-  String imageUrl;
-  String category;
+import 'package:capstone_project/features/core/domain/entities/order_item.dart';
+
+class OrderModel{
+  final String id;
+  final String title;
+  final double price;
+  final String imageUrl;
+  final String category;
+
+  OrderItem toEntity() => OrderItem(
+    id: id,
+    title: title,
+    category: category,
+    price: price,
+    imageUrl: imageUrl,
+  );
 
   OrderModel({
     required this.id,
