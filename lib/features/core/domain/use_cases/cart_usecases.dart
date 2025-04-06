@@ -1,3 +1,7 @@
+import 'package:capstone_project/features/core/domain/entities/cart_item.dart';
+import 'package:capstone_project/features/core/domain/entities/product.dart';
+import 'package:capstone_project/features/core/domain/repositories/cart_repository.dart';
+
 class CartUseCases {
   final CartRepository repository;
 
@@ -9,10 +13,6 @@ class CartUseCases {
 
   Future<void> addToCart(String userId, Product product, int quantity) {
     return repository.addToCart(userId, product, quantity);
-  }
-
-  Future<void> updateCartItem(String userId, CartItem cartItem) {
-    return repository.updateCartItem(userId, cartItem);
   }
 
   Future<void> removeFromCart(String userId, String productId) {

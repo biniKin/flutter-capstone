@@ -1,5 +1,7 @@
+import 'package:capstone_project/features/core/domain/entities/product.dart';
+
 class ProductModel {
-  int id;
+  String id;
   String title;
   double price;
   String description;
@@ -19,16 +21,25 @@ class ProductModel {
     required this.count,
   });
 
+  Product toEntity() => Product(
+    id: id,
+    title: title,
+    description: description,
+    price: price,
+    imageUrl: imageUrl,
+    category: category,
+  );
+
   //converting Json to Object
   factory ProductModel.fromJson(Map<String, dynamic> json) {
     return ProductModel(
-      id: json['id'] ?? 0,
+      id: json['id'].toString() ?? '',
       title: json['title'] ?? '',
-      price: json['price'] ?? 0,
+      price: json['price'] ?? 0.0,
       description: json['description'] ?? '',
       category: json['category'] ?? '',
       imageUrl: json['image'] ?? '',
-      rate: json['rate'] ?? 0,
+      rate: (json['rate'] != null) ? json['rate'] : 0.0,
       count: json['count'] ?? 0,
     );
   }

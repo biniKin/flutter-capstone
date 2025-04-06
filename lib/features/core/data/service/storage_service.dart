@@ -1,6 +1,8 @@
 import 'package:capstone_project/features/core/data/models/cart_model.dart';
 import 'package:capstone_project/features/core/data/models/order_model.dart';
+import 'package:capstone_project/features/core/data/models/product_model.dart';
 import 'package:capstone_project/features/core/data/models/user_model.dart';
+import 'package:capstone_project/features/core/domain/entities/product.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class StorageService {
@@ -33,31 +35,76 @@ class StorageService {
   }
 
   //
-  Future<void> saveCart(CartModel cart) async {
+  Future<void> saveCart(String userId, Product product, int quantity) async {
     try {
-      await firestore.collection('orders').doc(cart.id).set({
-        'title': cart.title,
-        'id': cart.id,
-        'price': cart.price,
-        'imageUrl': cart.imageUrl,
-        'category': cart.category,
-      });
+      final cartModel = CartModel(
+        id: product.id,
+        title: product.title,
+        price: product.price,
+        category: product.category,
+        imageUrl: product.imageUrl,
+        quantity: quantity,
+      );
+
+      await firestore
+          .collection('carts')
+          .doc(userId)
+          .collection('items')
+          .doc(product.id)
+          .set(cartModel.toJson());
     } catch (e) {
-      throw Exception('error on saving orders: $e');
+      throw Exception('Error adding item to cart: $e');
     }
   }
 
   //
-  Future<CartModel?> getCartData(String id) async {
+  Future<List<CartModel>> getallCartItems(String userid) async {
     try {
-      DocumentSnapshot doc = await firestore.collection('orders').doc(id).get();
-      if (doc.exists) {
-        return CartModel.fromFirebase(doc.data() as Map<String, dynamic>);
-      }
+      // Fetch all cart items for the given user ID from Firestore
+      final cartModelSnapshot =
+          await firestore
+              .collection('carts')
+              .doc(userid)
+              .collection('items')
+              .get();
+
+      return cartModelSnapshot.docs.map((doc) {
+        return CartModel.fromFirebase(doc.data());
+      }).toList();
     } catch (e) {
-      throw Exception("error on getting orders: $e");
+      throw Exception('Error fetching cart items: $e');
     }
-    return null;
+  }
+
+  Future<void> removeFromCart(String userId, String productId) async {
+    try {
+      await firestore
+          .collection('carts')
+          .doc(userId)
+          .collection('items')
+          .doc(productId)
+          .delete();
+    } catch (e) {
+      throw Exception('Error removing item from cart: $e');
+    }
+  }
+
+  Future<void> clearCart(String userId) async {
+    try {
+      final cartItemsSnapshot =
+          await firestore
+              .collection('carts')
+              .doc(userId)
+              .collection('items')
+              .get();
+      final batch = firestore.batch();
+      for (var doc in cartItemsSnapshot.docs) {
+        batch.delete(doc.reference);
+      }
+      await batch.commit();
+    } catch (e) {
+      throw Exception('Error clearing cart: $e');
+    }
   }
 
   //

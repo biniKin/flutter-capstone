@@ -1,5 +1,8 @@
+import 'package:capstone_project/features/core/domain/entities/cart_item.dart';
+
 class CartModel {
   String id;
+  int quantity;
   String title;
   double price;
   String imageUrl;
@@ -11,7 +14,17 @@ class CartModel {
     required this.category,
     required this.price,
     required this.imageUrl,
+    this.quantity = 1,
   });
+
+  CartItem toEntity() => CartItem(
+    id: id,
+    title: title,
+    category: category,
+    price: price,
+    imageUrl: imageUrl,
+    quantity: quantity,
+  );
 
   //
   factory CartModel.fromJson(Map<String, dynamic> json) {
@@ -29,8 +42,8 @@ class CartModel {
     return CartModel(
       id: data['id'] ?? '',
       title: data['title'] ?? '',
-      category: data['catergory'] ?? 0,
-      price: data['price'] ?? '',
+      category: data['catergory'] ?? '',
+      price: (data['price'] ?? 0.0) is double ? data['price'] : 0.0,
       imageUrl: data['image'] ?? '',
     );
   }
