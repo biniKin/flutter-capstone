@@ -1,61 +1,39 @@
+import 'package:capstone_project/features/core/data/models/cart_item_model.dart';
 import 'package:capstone_project/features/core/domain/entities/cart_item.dart';
 
 class CartModel {
-  String id;
-  int quantity;
-  String title;
-  double price;
-  String imageUrl;
-  String category;
+  final String userId;
+  final List<CartItemModel> items;
 
   CartModel({
-    required this.id,
-    required this.title,
-    required this.category,
-    required this.price,
-    required this.imageUrl,
-    this.quantity = 1,
+    required this.userId,
+    required this.items,
   });
 
-  CartItem toEntity() => CartItem(
-    id: id,
-    title: title,
-    category: category,
-    price: price,
-    imageUrl: imageUrl,
-    quantity: quantity,
-  );
+  factory CartModel.fromEntity(String userId, List<CartItem> entities) {
+    return CartModel(
+      userId: userId,
+      items: entities.map((item) => CartItemModel.fromEntity(item)).toList(),
+    );
+  }
 
-  //
+  List<CartItem> toEntityList() {
+    return items.map((item) => item.toEntity()).toList();
+  }
+
   factory CartModel.fromJson(Map<String, dynamic> json) {
     return CartModel(
-      id: json['id'],
-      title: json['title'],
-      category: json['category'],
-      price: json['price'],
-      imageUrl: json['image'],
+      userId: json['userId'],
+      items: (json['items'] as List)
+          .map((item) => CartItemModel.fromJson(item))
+          .toList(),
     );
   }
 
-  //
-  factory CartModel.fromFirebase(Map<String, dynamic> data) {
-    return CartModel(
-      id: data['id'] ?? '',
-      title: data['title'] ?? '',
-      category: data['catergory'] ?? '',
-      price: (data['price'] ?? 0.0) is double ? data['price'] : 0.0,
-      imageUrl: data['image'] ?? '',
-    );
-  }
-
-  //
   Map<String, dynamic> toJson() {
     return {
-      'id': id,
-      'title': title,
-      'category': category,
-      'price': price,
-      'image': imageUrl,
+      'userId': userId,
+      'items': items.map((item) => item.toJson()).toList(),
     };
   }
 }

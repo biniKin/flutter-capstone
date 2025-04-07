@@ -1,17 +1,13 @@
 
 
+import 'package:capstone_project/features/core/domain/entities/product.dart';
+
 class OrderItem {
-  String id;
-  String title;
-  double price;
-  String imageUrl;
-  String category;
+  final String userId;
+  final List<Product> products;
 
   OrderItem({
-    required this.id,
-    required this.title,
-    required this.category,
-    required this.price,
-    required this.imageUrl,
+    required this.userId,
+    required this.products,
   });
 }

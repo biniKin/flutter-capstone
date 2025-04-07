@@ -1,3 +1,4 @@
+import 'package:capstone_project/features/core/data/models/cart_model.dart';
 import 'package:capstone_project/features/core/domain/entities/cart_item.dart';
 import 'package:capstone_project/features/core/domain/entities/product.dart';
 import 'package:capstone_project/features/core/domain/repositories/cart_repository.dart';
@@ -7,15 +8,19 @@ class CartUseCases {
 
   CartUseCases(this.repository);
 
-  Future<List<CartItem>> getCartItems(String userId) {
-    return repository.getCartItems(userId);
+  Future<CartModel> getCartItems(String userId) {
+    return repository.getCart(userId);
   }
 
-  Future<void> addToCart(String userId, Product product, int quantity) {
-    return repository.addToCart(userId, product, quantity);
+  Future<void> addToCart(String userId, CartItem cartItem) {
+    return repository.addToCart(userId, cartItem);
   }
 
   Future<void> removeFromCart(String userId, String productId) {
     return repository.removeFromCart(userId, productId);
+  }
+
+  Future<void> updateCart(String userId, List<CartItem> updatedCartItems) {
+    return repository.updateCart(userId, updatedCartItems);
   }
 }

@@ -1,12 +1,15 @@
-import 'package:capstone_project/features/core/data/models/cart_model.dart';
+import 'package:capstone_project/features/core/data/models/cart_item_model.dart';
 import 'package:capstone_project/features/core/data/models/order_model.dart';
 import 'package:capstone_project/features/core/data/models/product_model.dart';
 import 'package:capstone_project/features/core/data/models/user_model.dart';
-import 'package:capstone_project/features/core/domain/entities/product.dart';
+import 'package:capstone_project/features/core/domain/entities/cart_item.dart';
+import 'package:capstone_project/features/core/domain/entities/order_item.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class StorageService {
   FirebaseFirestore firestore = FirebaseFirestore.instance;
+
+  // Save user data
   Future<void> saveUserDataToFirestore(UserModel user) async {
     try {
       await firestore.collection('users').doc(user.uid).set({
@@ -19,63 +22,19 @@ class StorageService {
     }
   }
 
-  //
-  Future<void> saveOrder(OrderModel order) async {
-    try {
-      await firestore.collection('orders').doc(order.id).set({
-        'title': order.title,
-        'id': order.id,
-        'price': order.price,
-        'imageUrl': order.imageUrl,
-        'category': order.category,
-      });
-    } catch (e) {
-      throw Exception('error on saving orders: $e');
-    }
+  // Add to cart
+  Future<void> addToCart(String userId, CartItem cartItem) async {
+    final cartItemJson = CartItemModel.fromEntity(cartItem).toJson();
+
+    await firestore
+        .collection('carts')
+        .doc(userId)
+        .collection('items')
+        .doc(cartItem.product.id) // Using product ID as doc ID
+        .set(cartItemJson);
   }
 
-  //
-  Future<void> saveCart(String userId, Product product, int quantity) async {
-    try {
-      final cartModel = CartModel(
-        id: product.id,
-        title: product.title,
-        price: product.price,
-        category: product.category,
-        imageUrl: product.imageUrl,
-        quantity: quantity,
-      );
-
-      await firestore
-          .collection('carts')
-          .doc(userId)
-          .collection('items')
-          .doc(product.id)
-          .set(cartModel.toJson());
-    } catch (e) {
-      throw Exception('Error adding item to cart: $e');
-    }
-  }
-
-  //
-  Future<List<CartModel>> getallCartItems(String userid) async {
-    try {
-      // Fetch all cart items for the given user ID from Firestore
-      final cartModelSnapshot =
-          await firestore
-              .collection('carts')
-              .doc(userid)
-              .collection('items')
-              .get();
-
-      return cartModelSnapshot.docs.map((doc) {
-        return CartModel.fromFirebase(doc.data());
-      }).toList();
-    } catch (e) {
-      throw Exception('Error fetching cart items: $e');
-    }
-  }
-
+  // Remove from cart
   Future<void> removeFromCart(String userId, String productId) async {
     try {
       await firestore
@@ -89,56 +48,94 @@ class StorageService {
     }
   }
 
+  // Clear cart
   Future<void> clearCart(String userId) async {
     try {
-      final cartItemsSnapshot =
-          await firestore
-              .collection('carts')
-              .doc(userId)
-              .collection('items')
-              .get();
+      final cartItemsSnapshot = await firestore
+          .collection('carts')
+          .doc(userId)
+          .collection('items')
+          .get();
+
       final batch = firestore.batch();
       for (var doc in cartItemsSnapshot.docs) {
         batch.delete(doc.reference);
       }
+
       await batch.commit();
     } catch (e) {
       throw Exception('Error clearing cart: $e');
     }
   }
 
-  //
-  Future<OrderModel?> getOrderData(String orderId) async {
+  // Update entire cart
+  Future<void> updateCart(
+    String userId,
+    List<CartItem> updatedCartItems,
+  ) async {
     try {
-      DocumentSnapshot doc = await firestore.collection('orders').doc(orderId).get();
-      if (doc.exists) {
-        return OrderModel.fromFirebase(doc.data() as Map<String, dynamic>);
+      final batch = firestore.batch();
+
+      for (var cartItem in updatedCartItems) {
+        final cartItemModel = CartItemModel.fromEntity(cartItem);
+        batch.set(
+          firestore
+              .collection('carts')
+              .doc(userId)
+              .collection('items')
+              .doc(cartItem.product.id),
+          cartItemModel.toJson(),
+        );
       }
+
+      await batch.commit();
     } catch (e) {
-      throw Exception('Error fetching order by ID: $e');
+      throw Exception('Error updating cart: $e');
     }
-    return null;
   }
 
-  // Fetch all orders for a specific user
-  Future<List<OrderModel>> getUserOrders(String userId) async {
+  // Create order
+  Future<void> createOrder(String userId, List<CartItem> cartItems) async {
     try {
-      final ordersSnapshot = await firestore
-          .collection('orders')
-          .where('userId', isEqualTo: userId)  // Filter by userId
-          .get();
+      final orderModel = OrderModel(
+        userId: userId,
+        products: cartItems.map((item) => ProductModel.fromEntity(item.product)).toList(),
+      );
 
-      return ordersSnapshot.docs.map((doc) {
-        return OrderModel.fromFirebase(doc.data() as Map<String, dynamic>);
-      }).toList();
+      final orderJson = orderModel.toJson();
+      await firestore.collection('orders').add(orderJson);
     } catch (e) {
-      throw Exception('Error fetching orders for user: $e');
+      throw Exception('Failed to create order: $e');
     }
   }
 
+  // Fetch specific order by ID
+  Future<List<OrderItem>> getOrderItems(String userId, String orderId) async {
+    final doc = await firestore.collection('orders').doc(orderId).get();
+    if (doc.exists) {
+      final orderModel = OrderModel.fromJson(doc.data()!);
+      return [orderModel.toEntity()];
+    } else {
+      return [];
+    }
+  }
+
+  // Fetch all orders for user
+  Future<List<OrderItem>> getUserOrders(String userId) async {
+    final query = await firestore
+        .collection('orders')
+        .where('userId', isEqualTo: userId)
+        .get();
+
+    return query.docs
+        .map((doc) => OrderModel.fromJson(doc.data()).toEntity())
+        .toList();
+  }
+
+  // Fetch user data
   Future<UserModel?> getUserData(String uid) async {
     try {
-      DocumentSnapshot doc = await firestore.collection('users').doc(uid).get();
+      final doc = await firestore.collection('users').doc(uid).get();
       if (doc.exists) {
         return UserModel.fromMap(doc.data() as Map<String, dynamic>, uid);
       }
@@ -147,25 +144,36 @@ class StorageService {
     }
     return null;
   }
-  ///////////
+
+  // Add to wishlist
   Future<void> addProductToWishlist(String userId, ProductModel product) async {
     try {
-      await firestore.collection('wishlists').doc(userId).collection('items').doc(product.id).set(product.toJson());
+      await firestore
+          .collection('wishlists')
+          .doc(userId)
+          .collection('items')
+          .doc(product.id)
+          .set(product.toJson());
     } catch (e) {
       throw Exception('Error adding product to wishlist: $e');
     }
   }
 
-  // Remove ProductModel from wishlist collection
+  // Remove from wishlist
   Future<void> removeProductFromWishlist(String userId, String productId) async {
     try {
-      await firestore.collection('wishlists').doc(userId).collection('items').doc(productId).delete();
+      await firestore
+          .collection('wishlists')
+          .doc(userId)
+          .collection('items')
+          .doc(productId)
+          .delete();
     } catch (e) {
       throw Exception('Error removing product from wishlist: $e');
     }
   }
 
-  // Fetch Wishlist data for a user
+  // Fetch wishlist
   Future<List<ProductModel>> getWishlistData(String userId) async {
     try {
       final wishlistSnapshot = await firestore
@@ -174,7 +182,9 @@ class StorageService {
           .collection('items')
           .get();
 
-      return wishlistSnapshot.docs.map((doc) => ProductModel.fromJson(doc.data() as Map<String, dynamic>)).toList();
+      return wishlistSnapshot.docs
+          .map((doc) => ProductModel.fromJson(doc.data()))
+          .toList();
     } catch (e) {
       throw Exception('Error fetching wishlist: $e');
     }

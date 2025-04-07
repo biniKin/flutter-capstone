@@ -1,58 +1,42 @@
+import 'package:capstone_project/features/core/data/models/product_model.dart';
 import 'package:capstone_project/features/core/domain/entities/order_item.dart';
 
 class OrderModel{
-  final String id;
-  final String title;
-  final double price;
-  final String imageUrl;
-  final String category;
+  final String userId;
+  final List<ProductModel> products;
 
   OrderItem toEntity() => OrderItem(
-    id: id,
-    title: title,
-    category: category,
-    price: price,
-    imageUrl: imageUrl,
+    userId: userId,
+    products: products.map((p) => p.toEntity()).toList(),
   );
 
   OrderModel({
-    required this.id,
-    required this.title,
-    required this.category,
-    required this.price,
-    required this.imageUrl,
+    required this.userId,
+    required this.products,
   });
 
   //
+  factory OrderModel.fromEntity(OrderItem entity) {
+    return OrderModel(
+      userId: entity.userId,
+      products: entity.products.map((e) => ProductModel.fromEntity(e)).toList(),
+    );
+  }
+
+  ///
   factory OrderModel.fromJson(Map<String, dynamic> json) {
     return OrderModel(
-      id: json['id'],
-      title: json['title'],
-      category: json['category'],
-      price: json['price'],
-      imageUrl: json['image'],
+      userId: json['userId'],
+      products: (json['products'] as List)
+          .map((p) => ProductModel.fromJson(p))
+          .toList(),
     );
   }
-
-  //
-  factory OrderModel.fromFirebase(Map<String, dynamic> data) {
-    return OrderModel(
-      id: data['id'] ?? '',
-      title: data['title'] ?? '',
-      category: data['catergory'] ?? '',
-      price: data['price'] ?? 0,
-      imageUrl: data['image'] ?? '',
-    );
-  }
-
   //
   Map<String, dynamic> toJson() {
     return {
-      'id': id,
-      'title': title,
-      'category': category,
-      'price': price,
-      'image': imageUrl,
+      'userId': userId,
+      'products': products.map((p) => p.toJson()).toList(),
     };
   }
 }
