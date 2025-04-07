@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:flutter-capstone/cart.dart';
-import 'package:flutter-capstone/details.dart';
+import 'package:capstone_project/cart.dart';
+import 'package:capstone_project/details.dart';
 
 class ProductController extends GetxController {
   final products = <MyProduct>[
