@@ -2,7 +2,7 @@ import 'package:capstone_project/features/core/data/service/storage_service.dart
 import 'package:capstone_project/features/core/domain/entities/cart_item.dart';
 
 import 'package:capstone_project/features/core/domain/entities/order_item.dart';
-import 'package:capstone_project/features/core/domain/entities/product.dart';
+
 import 'package:capstone_project/features/core/domain/repositories/order_repository.dart';
 
 class OrderRepositoryImpl implements OrderRepository {

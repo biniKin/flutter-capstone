@@ -1,6 +1,6 @@
 import 'package:capstone_project/features/core/data/models/cart_model.dart';
 import 'package:capstone_project/features/core/domain/entities/cart_item.dart';
-import 'package:capstone_project/features/core/domain/entities/product.dart';
+
 import 'package:capstone_project/features/core/domain/repositories/cart_repository.dart';
 
 class CartUseCases {
