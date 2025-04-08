@@ -1,5 +1,7 @@
 import 'package:capstone_project/features/core/presentation/screens/home.dart';
 import 'package:capstone_project/firebase_options.dart';
+import 'package:capstone_project/features/core/presentation/screens/sign_up_page.dart';
+import 'package:capstone_project/features/core/presentation/screens/login_page.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
@@ -16,7 +18,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: Home(),
+      home: LoginPage(onTap: () {}),
     );
   }
 }
