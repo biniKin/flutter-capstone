@@ -9,3 +9,4 @@ class Wishlist {
     required this.products,
   });
 }
+
