@@ -250,7 +250,7 @@ class _SignupPageState extends State<SignupPage> {
                             width: 248,
                             child: ElevatedButton(
                               style: ButtonStyle(
-                                backgroundColor: MaterialStatePropertyAll(
+                                backgroundColor: WidgetStatePropertyAll(
                                   const Color(0xFF6055D8),
                                 ),
                               ),
