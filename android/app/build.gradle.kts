@@ -11,8 +11,8 @@ plugins {
 android {
     namespace = "com.example.capstone_project"
     compileSdk = flutter.compileSdkVersion
-    ndkVersion = flutter.ndkVersion
-
+    //ndkVersion = flutter.ndkVersion
+      ndkVersion = "29.0.13113456"
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
@@ -27,8 +27,9 @@ android {
         applicationId = "com.example.capstone_project"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
-        minSdk = flutter.minSdkVersion
-        targetSdk = flutter.targetSdkVersion
+         minSdk = 23
+         targetSdk = 33
+
         versionCode = flutter.versionCode
         versionName = flutter.versionName
     }

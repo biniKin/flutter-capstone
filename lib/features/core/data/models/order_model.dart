@@ -1,7 +1,7 @@
 import 'package:capstone_project/features/core/data/models/product_model.dart';
 import 'package:capstone_project/features/core/domain/entities/order_item.dart';
 
-class OrderModel{
+class OrderModel {
   final String userId;
   final List<ProductModel> products;
 
@@ -10,10 +10,7 @@ class OrderModel{
     products: products.map((p) => p.toEntity()).toList(),
   );
 
-  OrderModel({
-    required this.userId,
-    required this.products,
-  });
+  OrderModel({required this.userId, required this.products});
 
   //
   factory OrderModel.fromEntity(OrderItem entity) {
@@ -27,9 +24,10 @@ class OrderModel{
   factory OrderModel.fromJson(Map<String, dynamic> json) {
     return OrderModel(
       userId: json['userId'],
-      products: (json['products'] as List)
-          .map((p) => ProductModel.fromJson(p))
-          .toList(),
+      products:
+          (json['products'] as List)
+              .map((p) => ProductModel.fromJson(p))
+              .toList(),
     );
   }
   //
