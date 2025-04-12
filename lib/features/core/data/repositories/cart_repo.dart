@@ -18,19 +18,20 @@ class CartRepo implements CartRepository {
               .collection('items')
               .get();
 
-      // Convert fetched data into CartModel and return it
-      List<CartItem> cartItems =
+      // Convert fetched data directly to CartItemModel
+      List<CartItemModel> cartItems =
           cartModelSnapshot.docs.map((doc) {
-            return CartItemModel.fromJson(doc.data()).toEntity();
+            return CartItemModel.fromJson(doc.data());
           }).toList();
 
       return CartModel(
         userId: userId,
-        items: cartItems.map((item) => CartItemModel.fromEntity(item)).toList(),
+        items: cartItems,
       );
     } catch (e) {
       print('Error fetching cart for user $userId: $e');
-      throw Exception('Error fetching cart for user $userId: $e');
+      // Return empty cart instead of throwing error
+      return CartModel(userId: userId, items: []);
     }
   }
 

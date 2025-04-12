@@ -15,6 +15,12 @@ class AuthRepositoryImpl implements AuthRepository {
         password: password,
       );
 
+      // Set the display name for the user
+      await userCredential.user?.updateDisplayName(username);
+      
+      // Reload the user to get the updated profile
+      await userCredential.user?.reload();
+      
       // Store additional user data in Firestore
       if (userCredential.user != null) {
         await _firestore.collection('users').doc(userCredential.user!.uid).set({

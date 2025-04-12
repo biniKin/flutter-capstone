@@ -1,4 +1,5 @@
 import 'package:capstone_project/features/core/data/models/cart_item_model.dart';
+import 'package:capstone_project/features/core/data/models/cart_model.dart';
 import 'package:capstone_project/features/core/data/models/order_model.dart';
 import 'package:capstone_project/features/core/data/models/product_model.dart';
 import 'package:capstone_project/features/core/data/models/user_model.dart';
@@ -19,6 +20,28 @@ class StorageService {
       });
     } catch (e) {
       throw Exception("Failed to save user data.");
+    }
+  }
+
+  // Update user data
+  Future<void> updateUserData(
+    String uid,
+    String name,
+    String email,
+    String phone,
+    String address,
+  ) async {
+    try {
+      await firestore.collection('users').doc(uid).set({
+        'uid': uid,
+        'email': email,
+        'name': name,
+        'phone': phone,
+        'address': address,
+        'updatedAt': FieldValue.serverTimestamp(),
+      }, SetOptions(merge: true));
+    } catch (e) {
+      throw Exception("Failed to update user data: $e");
     }
   }
 
@@ -68,6 +91,34 @@ class StorageService {
     }
   }
 
+  // Get cart
+  Future<CartModel> getCart(String userId) async {
+    try {
+      final cartSnapshot = await firestore
+          .collection('carts')
+          .doc(userId)
+          .collection('items')
+          .get();
+
+      final cartItems = cartSnapshot.docs.map((doc) {
+        final data = doc.data();
+        return CartItemModel(
+          product: ProductModel.fromJson(data['product']),
+          quantity: data['quantity'] ?? 1,
+        );
+      }).toList();
+
+      return CartModel(
+        userId: userId,
+        items: cartItems,
+      );
+    } catch (e) {
+      print('Error fetching cart: $e');
+      // Return empty cart instead of throwing error
+      return CartModel(userId: userId, items: []);
+    }
+  }
+
   // Update entire cart
   Future<void> updateCart(
     String userId,
@@ -97,9 +148,15 @@ class StorageService {
   // Create order
   Future<void> createOrder(String userId, List<CartItem> cartItems) async {
     try {
+      // Calculate total
+      final total = cartItems.fold(0.0, (sum, item) => sum + (item.product.price * item.quantity));
+      
       final orderModel = OrderModel(
+        id: DateTime.now().millisecondsSinceEpoch.toString(),
         userId: userId,
         products: cartItems.map((item) => ProductModel.fromEntity(item.product)).toList(),
+        total: total,
+        status: 'active',
       );
 
       final orderJson = orderModel.toJson();
@@ -187,6 +244,28 @@ class StorageService {
           .toList();
     } catch (e) {
       throw Exception('Error fetching wishlist: $e');
+    }
+  }
+
+  // Get notification settings
+  Future<bool> getNotificationSettings(String userId) async {
+    try {
+      final doc = await firestore.collection('users').doc(userId).get();
+      return doc.data()?['notificationsEnabled'] ?? true;
+    } catch (e) {
+      print('Error getting notification settings: $e');
+      return true; // Default to enabled if there's an error
+    }
+  }
+
+  // Update notification settings
+  Future<void> updateNotificationSettings(String userId, bool enabled) async {
+    try {
+      await firestore.collection('users').doc(userId).set({
+        'notificationsEnabled': enabled,
+      }, SetOptions(merge: true));
+    } catch (e) {
+      throw Exception('Error updating notification settings: $e');
     }
   }
 }
