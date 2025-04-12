@@ -5,6 +5,10 @@ import 'package:capstone_project/features/core/presentation/screens/products_pag
 import 'package:capstone_project/features/core/presentation/screens/profile_page.dart';
 import 'package:capstone_project/features/core/presentation/screens/search_page.dart';
 import 'package:capstone_project/features/core/data/service/api_service.dart';
+import 'package:iconify_flutter/iconify_flutter.dart';
+import 'package:iconify_flutter/icons/ic.dart';
+import 'package:iconify_flutter/icons/bi.dart';
+import 'package:iconify_flutter/icons/mdi.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -38,7 +42,7 @@ class _HomeState extends State<Home> {
     final List pages = [
       HomeScreen(),
       SearchPage(allProducts: _allProducts),
-      ProductsPage(products: []),
+      ProductsPage(products: _allProducts),
       ProfilePage(),
     ];
 
@@ -52,18 +56,21 @@ class _HomeState extends State<Home> {
             currentIndex = index;
           });
         },
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home, size: 24), label: ''),
+        items: [
           BottomNavigationBarItem(
-            icon: Icon(Icons.search, size: 24),
+            icon: Iconify(Ic.round_home, color: currentIndex == 0 ? const Color(0xFF6055D8) : Colors.grey),
             label: '',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.shopping_bag, size: 24),
+            icon: Iconify(Ic.round_search, color: currentIndex == 1 ? const Color(0xFF6055D8) : Colors.grey),
             label: '',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.person, size: 24),
+            icon: Iconify(Mdi.shopping, color: currentIndex == 2 ? const Color(0xFF6055D8) : Colors.grey),
+            label: '',
+          ),
+          BottomNavigationBarItem(
+            icon: Iconify(Bi.person, color: currentIndex == 3 ? const Color(0xFF6055D8) : Colors.grey),
             label: '',
           ),
         ],

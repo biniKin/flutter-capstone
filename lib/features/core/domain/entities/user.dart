@@ -1,13 +1,15 @@
 class User {
   final String uid;
-  final String email;
   final String username;
-  final String role;
+  final String email;
+  final String? phone;
+  final String? address;
 
   User({
     required this.uid,
-    required this.email,
     required this.username,
-    this.role = 'customer',
+    required this.email,
+    this.phone,
+    this.address,
   });
 }

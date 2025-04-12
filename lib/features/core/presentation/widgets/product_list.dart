@@ -1,11 +1,93 @@
 import 'package:flutter/material.dart';
 import 'package:capstone_project/features/core/data/models/product_model.dart';
 import 'package:capstone_project/features/core/presentation/screens/product_details.dart';
+import 'package:capstone_project/features/core/data/service/storage_service.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:iconify_flutter/iconify_flutter.dart';
+import 'package:iconify_flutter/icons/bi.dart';
+import 'package:iconify_flutter/icons/mdi.dart';
 
-class ProductCard extends StatelessWidget {
+class ProductCard extends StatefulWidget {
   final ProductModel product;
 
   const ProductCard({super.key, required this.product});
+
+  @override
+  State<ProductCard> createState() => _ProductCardState();
+}
+
+class _ProductCardState extends State<ProductCard> {
+  final StorageService _storageService = StorageService();
+  bool _isInWishlist = false;
+  bool _isLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _checkIfInWishlist();
+  }
+
+  Future<void> _checkIfInWishlist() async {
+    try {
+      final user = FirebaseAuth.instance.currentUser;
+      if (user != null) {
+        final wishlistItems = await _storageService.getWishlistData(user.uid);
+        if (mounted) {
+          setState(() {
+            _isInWishlist = wishlistItems.any((item) => item.id == widget.product.id);
+          });
+        }
+      }
+    } catch (e) {
+      print('Error checking wishlist status: $e');
+    }
+  }
+
+  Future<void> _toggleWishlist() async {
+    if (_isLoading) return;
+    
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      final user = FirebaseAuth.instance.currentUser;
+      if (user != null) {
+        if (_isInWishlist) {
+          await _storageService.removeProductFromWishlist(user.uid, widget.product.id);
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Removed from wishlist')),
+          );
+        } else {
+          await _storageService.addProductToWishlist(user.uid, widget.product);
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Added to wishlist')),
+          );
+        }
+        
+        if (mounted) {
+          setState(() {
+            _isInWishlist = !_isInWishlist;
+          });
+        }
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Please sign in to add to wishlist')),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error: $e')),
+      );
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -13,15 +95,15 @@ class ProductCard extends StatelessWidget {
       onTap: () {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (_) => ProductDetails(product: product)),
+          MaterialPageRoute(builder: (_) => ProductDetails(product: widget.product)),
         );
       },
       child: Container(
-        width: 140,
+        width: 160,
         margin: const EdgeInsets.only(right: 12),
         padding: const EdgeInsets.all(10),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: Colors.grey[200],
           borderRadius: BorderRadius.circular(20),
           boxShadow: [BoxShadow(color: Colors.grey.shade200, blurRadius: 8)],
         ),
@@ -34,7 +116,7 @@ class ProductCard extends StatelessWidget {
                   ClipRRect(
                     borderRadius: BorderRadius.circular(12),
                     child: Image.network(
-                      product.imageUrl,
+                      widget.product.imageUrl,
                       fit: BoxFit.cover,
                       width: double.infinity,
                       height: double.infinity,
@@ -43,10 +125,37 @@ class ProductCard extends StatelessWidget {
                   Positioned(
                     top: 6,
                     right: 6,
-                    child: Icon(
-                      Icons.favorite_border,
-                      size: 20,
-                      color: Colors.grey,
+                    child: GestureDetector(
+                      onTap: _toggleWishlist,
+                      child: Container(
+                        padding: const EdgeInsets.all(4),
+                        decoration: BoxDecoration(
+                          color: Colors.grey[200],
+                          shape: BoxShape.circle,
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.1),
+                              spreadRadius: 1,
+                              blurRadius: 3,
+                              offset: const Offset(0, 1),
+                            ),
+                          ],
+                        ),
+                        child: _isLoading
+                            ? const SizedBox(
+                                width: 16,
+                                height: 16,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  valueColor: AlwaysStoppedAnimation<Color>(Colors.red),
+                                ),
+                              )
+                            : Iconify(
+                                _isInWishlist ? Bi.heart_fill : Bi.heart,
+                                color: _isInWishlist ? Colors.red : Colors.grey,
+                                size: 20,
+                              ),
+                      ),
                     ),
                   ),
                 ],
@@ -58,10 +167,10 @@ class ProductCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    product.title.length > 20
-                        ? product.title.substring(0, 20) + '...'
-                        : product.title,
-                    style: const TextStyle(
+                    widget.product.title.length > 20
+                        ? widget.product.title.substring(0, 20) + '...'
+                        : widget.product.title,
+                    style: GoogleFonts.poppins(
                       fontWeight: FontWeight.bold,
                       fontSize: 14,
                     ),
@@ -70,8 +179,12 @@ class ProductCard extends StatelessWidget {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    '\$${product.price.toStringAsFixed(2)}',
-                    style: TextStyle(color: Color(0xFF6055D8), fontSize: 13),
+                    '\$${widget.product.price.toStringAsFixed(2)}',
+                    style: GoogleFonts.poppins(
+                      color: Color(0xFF6055D8), 
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                 ],
               ),
