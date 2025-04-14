@@ -228,7 +228,7 @@ class _LoginPageState extends State<LoginPage> {
                                       "Login",
                                       style: GoogleFonts.poppins(
                                         fontWeight: FontWeight.w800,
-                                        fontSize: screenWidth * 0.09,
+                                        fontSize: screenWidth * 0.05,
                                         color: Colors.white,
                                       ),
                                     ),
