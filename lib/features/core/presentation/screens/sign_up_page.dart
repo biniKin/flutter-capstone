@@ -73,12 +73,15 @@ class _SignupPageState extends State<SignupPage> {
 
   @override
   Widget build(BuildContext context) {
+    final screenHeight = MediaQuery.of(context).size.height;
+    final screenWidth = MediaQuery.of(context).size.width;
+    
     return Scaffold(
       backgroundColor: const Color(0xFF6055D8),
       body: Stack(
         children: [
           Positioned(
-            top: 100,
+            top: screenHeight * 0.15, // 15% from top
             bottom: 0,
             left: 0,
             right: 0,
@@ -89,30 +92,33 @@ class _SignupPageState extends State<SignupPage> {
               ),
               child: Form(
                 key: _formKey,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.all(20.0),
-                      child: SizedBox(
+                child: SingleChildScrollView(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: screenWidth * 0.05,
+                          vertical: screenHeight * 0.03,
+                        ),
                         child: Column(
                           children: [
                             Text(
                               "Sign up",
                               style: GoogleFonts.poppins(
                                 fontWeight: FontWeight.bold,
-                                fontSize: 36,
+                                fontSize: screenWidth * 0.09, // Responsive font size
                                 color: const Color(0xFF6055D8),
                               ),
                             ),
-                            const SizedBox(height: 20),
+                            SizedBox(height: screenHeight * 0.03),
 
                             Align(
                               alignment: Alignment.centerLeft,
                               child: Text(
                                 "UserName",
                                 style: GoogleFonts.poppins(
-                                  fontSize: 12,
+                                  fontSize: screenWidth * 0.035,
                                   fontWeight: FontWeight.w300,
                                 ),
                               ),
@@ -124,16 +130,16 @@ class _SignupPageState extends State<SignupPage> {
                                 hintText: "User name",
                                 prefixIcon: Iconify(Bi.person),
                                 focusedBorder: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(10),
-                                      borderSide: BorderSide(
-                                        color: Colors.grey,
-                                      ),
-                                    ),
-                                    enabledBorder: UnderlineInputBorder(
-                                      borderSide: BorderSide(
-                                        color: Colors.grey,
-                                      ),
-                                    ),
+                                  borderRadius: BorderRadius.circular(10),
+                                  borderSide: BorderSide(
+                                    color: Colors.grey,
+                                  ),
+                                ),
+                                enabledBorder: UnderlineInputBorder(
+                                  borderSide: BorderSide(
+                                    color: Colors.grey,
+                                  ),
+                                ),
                               ),
                               validator: (value) {
                                 if (value == null || value.isEmpty) {
@@ -142,13 +148,13 @@ class _SignupPageState extends State<SignupPage> {
                                 return null;
                               },
                             ),
-                            const SizedBox(height: 20),
+                            SizedBox(height: screenHeight * 0.02),
                             Align(
                               alignment: Alignment.centerLeft,
                               child: Text(
                                 "Email",
                                 style: GoogleFonts.poppins(
-                                  fontSize: 12,
+                                  fontSize: screenWidth * 0.035,
                                   fontWeight: FontWeight.w300,
                                 ),
                               ),
@@ -160,16 +166,16 @@ class _SignupPageState extends State<SignupPage> {
                                 hintText: "example@example.com",
                                 prefixIcon: Iconify(Ic.email),
                                 focusedBorder: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(10),
-                                      borderSide: BorderSide(
-                                        color: Colors.grey,
-                                      ),
-                                    ),
-                                    enabledBorder: UnderlineInputBorder(
-                                      borderSide: BorderSide(
-                                        color: Colors.grey,
-                                      ),
-                                    ),
+                                  borderRadius: BorderRadius.circular(10),
+                                  borderSide: BorderSide(
+                                    color: Colors.grey,
+                                  ),
+                                ),
+                                enabledBorder: UnderlineInputBorder(
+                                  borderSide: BorderSide(
+                                    color: Colors.grey,
+                                  ),
+                                ),
                               ),
                               validator: (value) {
                                 if (value == null || value.isEmpty) {
@@ -181,13 +187,13 @@ class _SignupPageState extends State<SignupPage> {
                                 return null;
                               },
                             ),
-                            const SizedBox(height: 20),
+                            SizedBox(height: screenHeight * 0.02),
                             Align(
                               alignment: Alignment.centerLeft,
                               child: Text(
                                 "Password",
                                 style: GoogleFonts.poppins(
-                                  fontSize: 12,
+                                  fontSize: screenWidth * 0.035,
                                   fontWeight: FontWeight.w300,
                                 ),
                               ),
@@ -212,7 +218,6 @@ class _SignupPageState extends State<SignupPage> {
                                             : Ic.outline_visibility_off,
                                       ),
                                     ),
-                                    
                                     focusedBorder: OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(10),
                                       borderSide: BorderSide(
@@ -240,61 +245,65 @@ class _SignupPageState extends State<SignupPage> {
                           ],
                         ),
                       ),
-                    ),
 
-                    SizedBox(
-                      child: Column(
-                        children: [
-                          SizedBox(
-                            height: 48,
-                            width: 248,
-                            child: ElevatedButton(
-                              style: ButtonStyle(
-                                backgroundColor: MaterialStatePropertyAll(
-                                  const Color(0xFF6055D8),
-                                ),
-                              ),
-                              onPressed: _isLoading ? null : signUp,
-                              child: _isLoading
-                                  ? const CircularProgressIndicator(color: Colors.white)
-                                  : Text(
-                                      "Sign Up",
-                                      style: GoogleFonts.poppins(
-                                        fontWeight: FontWeight.w800,
-                                        fontSize: 20,
-                                        color: Colors.white,
-                                      ),
-                                    ),
-                            ),
-                          ),
-                          const SizedBox(height: 20),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text(
-                                "Already have an account? ",
-                                style: GoogleFonts.poppins(
-                                  fontWeight: FontWeight.w400,
-                                  fontSize: 13,
-                                  color: Colors.grey,
-                                ),
-                              ),
-                              TextButton(
-                                onPressed: widget.onTap,
-                                child: Text(
-                                  "Login",
-                                  style: GoogleFonts.poppins(
-                                    fontWeight: FontWeight.bold,
+                      Padding(
+                        padding: EdgeInsets.only(
+                          bottom: screenHeight * 0.05,
+                        ),
+                        child: Column(
+                          children: [
+                            SizedBox(
+                              width: screenWidth * 0.7, // 70% of screen width
+                              height: screenHeight * 0.07, // 7% of screen height
+                              child: ElevatedButton(
+                                style: ButtonStyle(
+                                  backgroundColor: MaterialStatePropertyAll(
+                                    const Color(0xFF6055D8),
                                   ),
                                 ),
+                                onPressed: _isLoading ? null : signUp,
+                                child: _isLoading
+                                    ? const CircularProgressIndicator(color: Colors.white)
+                                    : Text(
+                                        "Sign Up",
+                                        style: GoogleFonts.poppins(
+                                          fontWeight: FontWeight.w800,
+                                          fontSize: screenWidth * 0.05,
+                                          color: Colors.white,
+                                        ),
+                                      ),
                               ),
-                            ],
-                          ),
-                          const SizedBox(height: 20),
-                        ],
+                            ),
+                            SizedBox(height: screenHeight * 0.02),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  "Already have an account? ",
+                                  style: GoogleFonts.poppins(
+                                    fontWeight: FontWeight.w400,
+                                    fontSize: screenWidth * 0.035,
+                                    color: Colors.grey,
+                                  ),
+                                ),
+                                TextButton(
+                                  onPressed: widget.onTap,
+                                  child: Text(
+                                    "Login",
+                                    style: GoogleFonts.poppins(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: screenWidth * 0.035,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            SizedBox(height: screenHeight * 0.02),
+                          ],
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ),
