@@ -71,12 +71,14 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
+    final screenHeight = MediaQuery.of(context).size.height;
+    final screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
       backgroundColor: const Color(0xFF6055D8),
       body: Stack(
         children: [
           Positioned(
-            top: 100,
+            top: screenHeight * 0.15,
             bottom: 0,
             left: 0,
             right: 0,
@@ -91,7 +93,10 @@ class _LoginPageState extends State<LoginPage> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Padding(
-                      padding: const EdgeInsets.all(20.0),
+                      padding: EdgeInsets.symmetric(
+                        horizontal: screenWidth * 0.05,
+                        vertical: screenHeight * 0.03,
+                      ),
                       child: SizedBox(
                         child: Column(
                           children: [
@@ -99,7 +104,7 @@ class _LoginPageState extends State<LoginPage> {
                               "Login",
                               style: GoogleFonts.poppins(
                                 fontWeight: FontWeight.bold,
-                                fontSize: 36,
+                                fontSize: screenWidth * 0.09,
                                 color: const Color(0xFF6055D8),
                               ),
                             ),
@@ -110,7 +115,7 @@ class _LoginPageState extends State<LoginPage> {
                               child: Text(
                                 "Email",
                                 style: GoogleFonts.poppins(
-                                  fontSize: 12,
+                                  fontSize: screenWidth * 0.035,
                                   fontWeight: FontWeight.w300,
                                 ),
                               ),
@@ -150,7 +155,7 @@ class _LoginPageState extends State<LoginPage> {
                               child: Text(
                                 "Password",
                                 style: GoogleFonts.poppins(
-                                  fontSize: 12,
+                                  fontSize: screenWidth * 0.035,
                                   fontWeight: FontWeight.w300,
                                 ),
                               ),
@@ -208,8 +213,8 @@ class _LoginPageState extends State<LoginPage> {
                       child: Column(
                         children: [
                           SizedBox(
-                            height: 48,
-                            width: 248,
+                            height: screenHeight * 0.07,
+                            width: screenWidth * 0.7,
                             child: ElevatedButton(
                               style: ButtonStyle(
                                 backgroundColor: MaterialStatePropertyAll(
@@ -223,7 +228,7 @@ class _LoginPageState extends State<LoginPage> {
                                       "Login",
                                       style: GoogleFonts.poppins(
                                         fontWeight: FontWeight.w800,
-                                        fontSize: 20,
+                                        fontSize: screenWidth * 0.09,
                                         color: Colors.white,
                                       ),
                                     ),
@@ -237,7 +242,7 @@ class _LoginPageState extends State<LoginPage> {
                                 "Don't have an account? ",
                                 style: GoogleFonts.poppins(
                                   fontWeight: FontWeight.w400,
-                                  fontSize: 13,
+                                  fontSize: screenWidth * 0.035,
                                   color: Colors.grey,
                                 ),
                               ),
