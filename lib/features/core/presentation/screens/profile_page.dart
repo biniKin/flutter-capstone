@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:capstone_project/features/core/presentation/screens/login_screen.dart';
+import 'package:capstone_project/features/core/presentation/screens/login_page.dart';
 import 'package:capstone_project/features/core/presentation/screens/wishlist_page.dart';
 import 'package:capstone_project/features/core/presentation/screens/edit_profile_page.dart';
 import 'package:capstone_project/features/core/presentation/screens/orders_page.dart';
@@ -38,7 +38,9 @@ class _ProfilePageState extends State<ProfilePage> {
     await FirebaseAuth.instance.signOut();
     Navigator.pushReplacement(
       context,
-      MaterialPageRoute(builder: (_) => LoginScreen()),
+      MaterialPageRoute(builder: (_) => LoginPage(onTap: () {
+        Navigator.pop(context);
+      })),
     );
   }
 
